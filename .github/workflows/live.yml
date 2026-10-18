@@ -41,7 +41,7 @@ jobs:
         run: |
           for i in $(seq 1 12); do
             if curl -fsS "${URL}health.json" -o /tmp/health.json && python -c 'import json; d=json.load(open("/tmp/health.json")); assert d["ok"] and d["teams"]>=2 and d["players"]>0'; then
-              curl -fsS "${URL}" | grep -q 'Live NFL Analytics' && exit 0
+              curl -fsS "${URL}" | grep -q 'NFL EDGE' && exit 0
             fi
             sleep 15
           done
