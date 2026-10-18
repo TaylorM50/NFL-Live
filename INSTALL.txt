@@ -1,0 +1,7 @@
+BLACK + PURPLE DASHBOARD UPDATE
+
+Replace only the root index.html in your NFL-Live GitHub repository with the included file. Commit to main. Keep build.py, requirements.txt and .github/workflows/live.yml unchanged. Wait for Publish live NFL site to finish, then reload the site. If the layout is cached, use a hard refresh.
+
+Uses the data schema from the previously supplied live package. No demo data. No change to prediction calculations. Design inspired by your uploaded reference screenshot, with original CSS black/purple shard decoration. No external fonts, images or JavaScript libraries required.
+
+Browser rendering and live endpoint integration have not been verified in this environment.
