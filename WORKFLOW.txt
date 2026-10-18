@@ -1,0 +1,48 @@
+name: Publish live NFL site
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: live-nfl-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Download real NFL data and build website
+        run: python build.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Publish public website
+        id: deploy
+        uses: actions/deploy-pages@v4
+      - name: Verify public website and real-data output
+        env:
+          URL: ${{ steps.deploy.outputs.page_url }}
+        run: |
+          for i in $(seq 1 12); do
+            if curl -fsS "${URL}health.json" -o /tmp/health.json && python -c 'import json; d=json.load(open("/tmp/health.json")); assert d["ok"] and d["teams"]>=2 and d["players"]>0'; then
+              curl -fsS "${URL}" | grep -q 'Live NFL Analytics' && exit 0
+            fi
+            sleep 15
+          done
+          exit 1
